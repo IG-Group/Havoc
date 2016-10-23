@@ -1,6 +1,6 @@
 # IG Havoc
 
-[![Clojars Project](https://img.shields.io/clojars/v/somewhere.svg)](https://clojars.org/somewhere)
+[![Clojars Project](https://img.shields.io/clojars/v/ig/havoc.svg)](https://clojars.org/ig/havoc)
 
 Clojure library to do automated resilience testing using [Docker Compose](https://docs.docker.com/compose/overview/).
 
