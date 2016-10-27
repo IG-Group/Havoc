@@ -91,7 +91,7 @@
 
 
 (deftest one-ok
-  (let [one-ok-always (api/at-least-one-container-ok [:foo :bar])]
+  (let [one-ok-always (api/keep-some-containers-ok 2 [:foo :bar :baz])]
     (are [expected action old-state]
       (= expected (one-ok-always action old-state nil))
 
@@ -99,16 +99,19 @@
       {:action :container/restart
        :item   :foo}
       {:foo {:status :ok}
-       :bar {:status :stopped}}
+       :bar {:status :stopped}
+       :baz {:status :stopped}}
 
       true
       {:action :container/restart
        :item   :foo}
       {:foo {:status :ok}
-       :bar {:status :ok}}
+       :bar {:status :ok}
+       :baz {:status :ok}}
 
       true
       {:action :container/restart
        :item   :foo}
       {:foo {:status :stopped}
-       :bar {:status :ok}})))
+       :bar {:status :ok}
+       :baz {:status :stopped}})))

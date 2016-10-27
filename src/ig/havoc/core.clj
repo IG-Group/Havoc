@@ -43,7 +43,7 @@
 (defn final-state [plan]
   (:ig.havoc.impl.command-generator/final-state plan))
 
-(defn at-least-one-container-ok [containers]
+(defn keep-some-containers-ok [how-many-to-keep-ok containers]
   (let [containers (set containers)
         ok? (fn [[_ {:keys [status]}]]
               (= :ok status))]
@@ -52,7 +52,7 @@
                               (filter ok?
                                       (select-keys old-state containers)))]
         (not (and (= item (first all-still-ok))
-                  (= 1 (count all-still-ok))
+                  (>= how-many-to-keep-ok (count all-still-ok))
                   (#{:container/kill
                      :container/stop
                      :container/restart

@@ -347,10 +347,10 @@ Right now Havoc comes with one:
                              initial-state
                              final-states
                              command-generators
-                             :global-constraint (havoc/at-least-one-container-ok [:kafka1 :kafka2]))
+                             :global-constraint (havoc/keep-some-containers-ok 1 [:kafka1 :kafka2]))
 ```
 
-This will generate a plan in which one of the Kafkas will always be up and running.
+This will generate a plan in which one of the Kafkas will always be up and running (and never restarted)
 
 
 ## License
