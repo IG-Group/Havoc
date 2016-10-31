@@ -89,6 +89,37 @@
                                        (map #(api/container-gen %) a))]
           (valid-rose-tree? rose-tree)))))
 
+(deftest shrinking-works
+  (let [smallest (some-> (clojure.test.check/quick-check
+                           1
+                           (clojure.test.check.properties/for-all
+                             [p (api/random-plan-generator [10 100]
+                                                           (zipmap [:a :b :c :d] (repeat {:status :ok}))
+                                                           [(zipmap [:a :b :c :d] (repeat {:status :ok}))]
+                                                           (map (fn [x] (api/container-gen x)) [:a :b :c :d]))]
+                             (empty?
+                               (filter (fn [x] (= :c (:host x)))
+                                       (api/initial->broken p)))))
+                         (get-in [:shrunk :smallest 0])
+                         api/initial->broken)]
+    (is (or (nil? smallest)
+            (and (= 1 (count smallest))
+                 (= :c (:host (first smallest))))))))
+
+(deftest when-shrinking-final-state-is-the-same
+  (let [final-states (atom [])
+        _ (clojure.test.check/quick-check
+            1
+            (clojure.test.check.properties/for-all
+              [p (api/random-plan-generator [10 100]
+                                            (zipmap [:a :b :c :d] (repeat {:status :ok}))
+                                            [(zipmap [:a :b :c :d] (repeat {:status :ok}))
+                                             (zipmap [:a :b :c :d] (repeat {:status :mmmm}))
+                                             (zipmap [:a :b :c :d] (repeat {:status :dfad}))]
+                                            (map (fn [x] (api/container-gen x)) [:a :b :c :d]))]
+              (swap! final-states conj (:ig.havoc.impl.command-generator/final-state p))
+              false))]
+    (is (= 1 (count (distinct @final-states))))))
 
 (deftest one-ok
   (let [one-ok-always (api/keep-some-containers-ok 2 [:foo :bar :baz])]

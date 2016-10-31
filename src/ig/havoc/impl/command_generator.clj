@@ -37,7 +37,7 @@
                s))
 
 (defn shrink-sequence
-  [cmd-seq global-constraint initial-state node-fn]
+  [cmd-seq initial-state global-constraint node-fn]
   (letfn [(shrink-subseq [[indices states]]
             (when (seq indices)
               (rose/make-rose
@@ -73,24 +73,27 @@
   (every? (partial satisfies? Command) gens))
 
 (defn random-plan-generator
-  [from-to initial-state healthy-states command-generators & {:keys [global-constraint]
+  [[min-commands max-commands] initial-state healthy-states command-generators & {:keys [global-constraint]
                                                               :or   {global-constraint (constantly true)}}]
   {:pre [(all-command-generators command-generators)]}
-  (gen/bind (gen/no-shrink (gen/tuple (apply gen/choose from-to)
-                                      (gen/elements healthy-states)))
-            (fn [[num-elements final-state]]
-              (gen/bind (cmd-seq-helper initial-state command-generators num-elements global-constraint)
-                        (fn [cmd-seq]
-                          (let [shrinked (shrink-sequence (vec cmd-seq)
-                                                          initial-state
-                                                          global-constraint
-                                                          (fn [states commands]
-                                                            {::initial-state      initial-state
-                                                             ::final-state        final-state
-                                                             ::states             states
-                                                             ::commands           commands
-                                                             ::command-generators command-generators}))]
-                            (gen/gen-pure shrinked)))))))
+  (gen/gen-bind (gen/tuple gen/nat
+                           (gen/elements healthy-states))
+                (fn [[[num-elements final-state] _children]]
+                  (gen/gen-bind (cmd-seq-helper initial-state
+                                                command-generators
+                                                (min max-commands (+ num-elements min-commands))
+                                                global-constraint)
+                                (fn [[cmd-seq _children]]
+                                  (let [shrinked (shrink-sequence (vec cmd-seq)
+                                                                  initial-state
+                                                                  global-constraint
+                                                                  (fn [states commands]
+                                                                    {::initial-state      initial-state
+                                                                     ::final-state        final-state
+                                                                     ::states             states
+                                                                     ::commands           commands
+                                                                     ::command-generators command-generators}))]
+                                    (gen/gen-pure shrinked)))))))
 
 (defn commands-from-to [command-generators from-state target-state]
   {:pre [(all-command-generators command-generators)]}
