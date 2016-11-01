@@ -52,7 +52,7 @@
 
 (defn generate-rose [initial-state commands]
   (let [r (random/make-random)
-        size-seq (cycle (range 0 10))]
+        size 4]
     (gen/call-gen (api/random-plan-generator [4 10]
                                              initial-state
                                              [initial-state]
@@ -60,7 +60,7 @@
                                              :global-constraint (fn [_ _ new-state]
                                                                   (at-least-one-ok new-state)))
                   (first (gen/lazy-random-states r))
-                  size-seq)))
+                  size)))
 
 (defn valid-rose-tree? [rose-tree]
   (let [root (rose/root rose-tree)]
