@@ -48,7 +48,7 @@
     (reduce (fn [resp-so-far handicap]
               ((get evil-fns handicap) config resp-so-far))
             resp
-            (get config :handicaps))))
+            (get config :faults))))
 
 (defn parse-body [req]
   (edn/read-string (slurp (:body req))))
