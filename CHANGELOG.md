@@ -4,7 +4,8 @@ API is still not stable. Expect breaking changes until version 1.0.0.
 
 ## [Unreleased]
 ### Changed
-- Changing at-least-one-container-ok for keep-some-containers-ok 
+- Changing at-least-one-container-ok for keep-some-containers-ok
+- Adding a full working example
 
 ## 0.1.0 - 2016-10-22
 ### Added
