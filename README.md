@@ -58,7 +58,7 @@ Now you can define a couple of helper functions to bring the system up and down.
              "-f" "docker-compose.yml" "up"
              "-d"
              "--build"
-             "--force-recreate")
+             "--force-recreate"))
 
 (defn stop-system []
    (shell/sh "docker-compose"
