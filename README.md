@@ -36,7 +36,7 @@ For example, here is a Docker Compose file that will start a Zookeeper and Kafka
        environment:
           KAFKA_BROKER_ID: 1
           KAFKA_ADVERTISED_PORT: 9092
-          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+          KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
           KAFKA_CREATE_TOPICS: "THE.TEST:20:2"
 
 An example of a Dockerfile that install `iptables` and `tc` on a [Tomcat Container](https://hub.docker.com/_/tomcat/)
