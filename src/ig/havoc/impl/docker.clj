@@ -1,5 +1,6 @@
 (ns ig.havoc.impl.docker
   (:require
+    [clojure.string :as s]
     [ig.havoc.impl.command-generator :as core]
     [clj-http.client :as http-client]
     [cheshire.core :as json]
@@ -37,16 +38,18 @@
         [(resp-streams t) s]))))
 
 (defn create-docker [docker-url docker-compose-project-name]
-  (letfn [(container-info [idx full-container-info]
+  (letfn [(clean-project-name []
+            (s/replace docker-compose-project-name #"-" ""))
+          (container-info [idx full-container-info]
             [(-> full-container-info :Labels :com.docker.compose.service keyword)
              {:ip        (-> full-container-info :NetworkSettings :Networks first val :IPAddress)
               :name      (.substring (-> full-container-info :Names first) 1)
               :tc-number (* 10 (inc idx))}])
           (correct-project? [full-container-info]
-            (= docker-compose-project-name
+            (= (clean-project-name)
                (-> full-container-info :Labels :com.docker.compose.project)))]
     {:docker-url docker-url
-     :project    docker-compose-project-name
+     :project    (clean-project-name)
      :services   (->> (http-client/get (str docker-url "/containers/json") {:as :json})
                       :body
                       (filter correct-project?)
@@ -87,10 +90,10 @@
           byte-streams/to-input-stream
           read-record
           (log/info "running" cmd))
-        (throw (ex-info "exec response has no id" {:request request
+        (throw (ex-info "exec response has no id" {:request  request
                                                    :response exec
-                                                   :docker docker
-                                                   :service service}))))))
+                                                   :docker   docker
+                                                   :service  service}))))))
 
 (defn live-cycle! [docker service live-cycle-command]
   (http-client/request {:method :post
