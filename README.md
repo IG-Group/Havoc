@@ -27,17 +27,19 @@ be run in privileged mode.
 
 For example, here is a Docker Compose file that will start a Zookeeper and Kafka server:
 
-     zoo1:
-       image: wurstmeister/zookeeper:3.4.6
-       privileged: true
-     kafka1:
-       image: wurstmeister/kafka:0.9.0.1
-       privileged: true
-       environment:
-          KAFKA_BROKER_ID: 1
-          KAFKA_ADVERTISED_PORT: 9092
-          KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
-          KAFKA_CREATE_TOPICS: "THE.TEST:20:2"
+     version: "2"
+     services:
+      zoo1:
+        image: wurstmeister/zookeeper:3.4.6
+        privileged: true
+      kafka1:
+        image: wurstmeister/kafka:0.9.0.1
+        privileged: true
+        environment:
+           KAFKA_BROKER_ID: 1
+           KAFKA_ADVERTISED_PORT: 9092
+           KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
+           KAFKA_CREATE_TOPICS: "THE.TEST:20:2"
 
 An example of a Dockerfile that install `iptables` and `tc` on a [Tomcat Container](https://hub.docker.com/_/tomcat/)
 
@@ -118,7 +120,8 @@ To inject faults in the network:
               :from    :zoo1
               :to      :kafka1})
 
-(havoc/exec! {:command :link/flaky
+(havoc/exec! docker
+             {:command :link/flaky
               :from    :zoo1
               :to      :kafka1
               :delay   {:time        100
