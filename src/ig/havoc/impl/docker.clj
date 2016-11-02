@@ -76,7 +76,7 @@
     (if-let [exec (try+ (http-client/request request)
                         (catch [:status 500] {:keys [body]}
                           (if (.contains body "is not running")
-                            (log/info "Ignoring " cmd " as service is not running")
+                            (log/debug "Ignoring " cmd " as service is not running")
                             (throw+))
                           false))]
       (if-let [exec-id (-> exec :body :Id)]
@@ -89,7 +89,7 @@
           :body
           byte-streams/to-input-stream
           read-record
-          (log/info "running" cmd))
+          (log/debug "running" cmd))
         (throw (ex-info "exec response has no id" {:request  request
                                                    :response exec
                                                    :docker   docker
