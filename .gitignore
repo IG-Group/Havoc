@@ -12,3 +12,4 @@ pom.xml.asc
 .hg/
 .lein-failures
 target
+debug.log
