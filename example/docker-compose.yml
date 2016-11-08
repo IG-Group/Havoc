@@ -2,34 +2,51 @@ version: "2"
 services:
  zoo1:
    image: wurstmeister/zookeeper:3.4.6
-   privileged: true
  kafka1:
-   image: wurstmeister/kafka:0.9.0.1
+   build: kafka
    privileged: true
+   links:
+    - zoo1
    environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
       KAFKA_CREATE_TOPICS: "THE.TEST:20:2"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
  kafka2:
-   image: wurstmeister/kafka:0.9.0.1
+   build: kafka
    privileged: true
+   links:
+    - zoo1
    environment:
       KAFKA_BROKER_ID: 2
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
       KAFKA_CREATE_TOPICS: "THE.TEST:20:2"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
  kafka3:
-   image: wurstmeister/kafka:0.9.0.1
+   build: kafka
    privileged: true
+   links:
+    - zoo1
    environment:
       KAFKA_BROKER_ID: 3
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
       KAFKA_CREATE_TOPICS: "THE.TEST:20:2"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
  our-service1:
    build: our-service
+   privileged: true
+   ports:
+    - 3003:3002
+ our-service2:
+   build: our-service
+   privileged: true
+   ports:
+    - 3004:3002
  fake:
    build: fake
    ports:
     - 3001:80
+    - 3002:3002

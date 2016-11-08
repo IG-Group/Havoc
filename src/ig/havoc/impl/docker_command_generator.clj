@@ -17,9 +17,10 @@
             (set (get-in state [name :handicaps])))
           (possible-actions [state]
             (let [current-state (this-state state)]
-              (concat
-                (remove current-state (keys handicaps))
-                (vals (select-keys handicaps current-state)))))]
+              (set
+                (concat
+                  (remove current-state (keys handicaps))
+                  (vals (select-keys handicaps current-state))))))]
     (reify core/Command
       (precondition [_ state] true)
       (postcondition [_ state {action :action}]
