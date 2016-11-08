@@ -24,6 +24,11 @@
             "-p" project-name
             "-f" "docker-compose.yml" "down" "-v" "--remove-orphans"))
 
+(defn dump-logs []
+  (let [dump-file (str "broken." (System/currentTimeMillis) ".log")]
+    (log/info "Dumping logs to " dump-file)
+    (shell/sh "sh" "-c" (str "docker-compose -p " project-name " logs --no-color >& " dump-file))))
+
 (def from [:our-service1 :our-service2])
 (def to [:kafka1 :kafka2 :kafka3])
 (def ok {:status :ok})
@@ -73,8 +78,9 @@
               (util/try-for (* 5 60)
                             (log/info "So far" (count (util/unique-messages)))
                             (= 10000 (count (util/unique-messages))))]
-          (if-not result
-            (log/warn "Broke!!!" (havoc/initial->broken plan)))
+          (when-not result
+            (log/warn "Broke!!!" (havoc/initial->broken plan))
+            (dump-logs))
           result))
       (finally
         (log/info (stop-system))))))
@@ -84,8 +90,7 @@
    :broken->final   (havoc/broken->final plan)})
 
 (t/deftest at-least-once
-  (let [result (tc/quick-check 100 at-least-once-property
-                 :seed 1478105260193)]
+  (let [result (tc/quick-check 100 at-least-once-property)]
     (when-not (true? (:result result))
       (t/is false
             (pr-str (-> result
