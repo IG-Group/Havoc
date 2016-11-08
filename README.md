@@ -11,6 +11,10 @@ The library contains apis to:
 * Simulate misbehaving http server
 * test.check generators to build a random resilience testing scenarios
 
+## Example
+
+There is a full example at [example](example)
+
 ## Usage
 
 ```Clojure
