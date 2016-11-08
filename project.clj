@@ -1,4 +1,4 @@
-(defproject ig/havoc "0.1.1"
+(defproject ig/havoc "0.1.2-SNAPSHOT"
   :description "A resilience testing library for Clojure and Docker"
   :url "https://github.com/IG-Group/Havoc"
   :license {:name "Apache License 2.0"
