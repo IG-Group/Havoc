@@ -13,5 +13,5 @@ API is still not stable. Expect breaking changes until version 1.0.0.
 ### Added
 - First Release
 
-[Unreleased]: https://github.com/IG-Group/havoc/compare/0.1.1...HEAD
-[0.1.1]: https://github.com/IG-Group/havoc/compare/0.1.0...0.1.1
+[Unreleased]: https://github.com/IG-Group/havoc/compare/havoc-0.1.1...HEAD
+[0.1.1]: https://github.com/IG-Group/havoc/compare/havoc-0.1.0...havoc-0.1.1
