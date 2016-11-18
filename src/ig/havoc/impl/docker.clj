@@ -118,7 +118,8 @@
    tc class add dev eth0 parent 1: classid 1:99 htb rate 1000mbit;
    tc qdisc add dev eth0 parent 1:99 handle 99: pfifo limit 5000;")
 
-(defmethod core/exec! :link/flaky [docker {:keys [from to delay loss corrupt]}]
+(defmethod core/exec! :link/flaky [docker {:keys [from to delay loss corrupt rate]
+                                           :or {rate "1000mbit"}}]
   (let [delay-str (when delay
                     (selmer/render
                       "delay {{time}}ms {{jitter|default:1}}ms {{correlation|default:0}}% distribution normal"
@@ -135,7 +136,7 @@
           ["su" "-c"
            (selmer/render
              (str allow-all-traffic
-                  "tc class replace dev eth0 parent 1: classid 1:{{tc-number}} htb rate 1000mbit;
+                  "tc class replace dev eth0 parent 1: classid 1:{{tc-number}} htb rate {{rate}};
                    tc filter replace dev eth0 parent 1: protocol ip prio {{tc-number}} u32 flowid 1:{{tc-number}} match ip dst {{ip}};
                    tc qdisc replace dev eth0 parent 1:{{tc-number}} handle {{handle-number}}: netem {{loss}} {{delay}} {{corrupt}}")
              {:tc-number     (service->tc-number docker to)
@@ -143,7 +144,8 @@
               :handle-number (service->tc-number docker to)
               :loss          loss-str
               :delay         delay-str
-              :corrupt       corrupt-str})])))
+              :corrupt       corrupt-str
+              :rate          rate})])))
 
 (defmethod core/exec! :link/fast [docker {:keys [from to]}]
   (exec docker from

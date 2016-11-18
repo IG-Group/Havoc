@@ -2,8 +2,6 @@
   (:require clojure.data
             clojure.set
             [clojure.test.check.generators :as gen]
-            [clojure.test.check.rose-tree :as rose]
-            [clojure.test.check.random :as random]
             [ig.havoc.impl.command-generator :as core]
             loom.graph
             loom.attr
@@ -96,12 +94,11 @@
   {:ok     {:link/cut :cutted}
    :cutted {:link/fix :ok}})
 
-(def link-handicaps {:link/delay     :unlag
-                     :link/big-delay :remove-delay
-                     :link/corrupt   :uncorrupt
-                     :link/loss      :not-loss
-                     ;:slow-write :fast-write             ;; TODO:!!!!
-                     ;:slow-read  :fast-read
+(def link-handicaps {:link/delay      :unlag
+                     :link/big-delay  :remove-delay
+                     :link/corrupt    :uncorrupt
+                     :link/loss       :not-loss
+                     :link/slow-10bps :link/fast-1000mbits
                      })
 
 (defmacro def->docker-status-command [cmd]
@@ -133,6 +130,7 @@
                (handicaps# :link/loss) (assoc :loss {:percent     7
                                                      :correlation 25})
                (handicaps# :link/corrupt) (assoc :corrupt {:percent 5})
+               (handicaps# :link/slow-10bps) (assoc :rate "10bps")
                (handicaps# :link/delay) (assoc :delay {:time        1000
                                                        :jitter      500
                                                        :correlation 75})
