@@ -94,12 +94,11 @@
   {:ok     {:link/cut :cutted}
    :cutted {:link/fix :ok}})
 
-(def link-handicaps {:link/delay      :unlag
-                     :link/big-delay  :remove-delay
-                     :link/corrupt    :uncorrupt
-                     :link/loss       :not-loss
-                     :link/slow-10bps :link/fast-1000mbits
-                     })
+(def link-handicaps {:link/delay       :unlag
+                     :link/big-delay   :remove-delay
+                     :link/corrupt     :uncorrupt
+                     :link/loss        :not-loss
+                     :link/limit-10bps :link/fast-1000mbits})
 
 (defmacro def->docker-status-command [cmd]
   `(defmethod core/->docker ~cmd [cmd# _# _#]
@@ -130,7 +129,7 @@
                (handicaps# :link/loss) (assoc :loss {:percent     7
                                                      :correlation 25})
                (handicaps# :link/corrupt) (assoc :corrupt {:percent 5})
-               (handicaps# :link/slow-10bps) (assoc :rate "10bps")
+               (handicaps# :link/limit-10bps) (assoc :rate "10bps")
                (handicaps# :link/delay) (assoc :delay {:time        1000
                                                        :jitter      500
                                                        :correlation 75})

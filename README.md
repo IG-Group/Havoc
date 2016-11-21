@@ -133,6 +133,7 @@ To inject faults in the network:
                         :correlation 90}
               :loss    {:percent     30
                         :correlation 75}
+              :rate    "100bps"
               :corrupt {:percent 5}})
 ```
 
