@@ -1,4 +1,4 @@
-FROM wurstmeister/kafka:0.10.1.0
+FROM wurstmeister/kafka:0.10.1.0-1
 
 ADD wait-and-start.sh /usr/bin/wait-and-start.sh
 
